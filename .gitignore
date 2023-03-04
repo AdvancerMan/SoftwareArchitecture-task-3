@@ -39,3 +39,4 @@ bin/
 .DS_Store
 
 exchange.db
+profile.db

@@ -60,4 +60,16 @@ class UserStocksRepositoryImpl(
         )
             .firstOrNull()
     }
+
+    override fun getStocksByUserId(userId: String): List<UserStocks> {
+        val sql = "select user_id, company_stocks_id, stocks_quantity " +
+                "from user_stocks " +
+                "where user_id = ?;"
+
+        return jdbcTemplate!!.query(
+            sql,
+            DataClassRowMapper(UserStocks::class.java),
+            userId,
+        )
+    }
 }

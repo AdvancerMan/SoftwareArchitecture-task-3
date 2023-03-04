@@ -1,4 +1,4 @@
-package com.example.hw3.exchange
+package com.example.hw3.profile
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -7,8 +7,8 @@ import org.springframework.context.annotation.PropertySource
 import java.time.Clock
 
 @SpringBootApplication
-@PropertySource("classpath:application-exchange.properties")
-class ExchangeApplication {
+@PropertySource("classpath:application-profile.properties")
+class ProfileApplication {
 
     @Bean
     fun clock(): Clock {
@@ -17,5 +17,5 @@ class ExchangeApplication {
 }
 
 fun main(args: Array<String>) {
-    runApplication<ExchangeApplication>(*args)
+    runApplication<ProfileApplication>(*args)
 }

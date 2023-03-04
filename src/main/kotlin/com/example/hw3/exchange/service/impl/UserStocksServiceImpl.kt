@@ -49,4 +49,8 @@ class UserStocksServiceImpl(
 
         companyStocksRepository.updateCompanyStocks(updatedCompanyStocks)
     }
+
+    override fun getUserStocks(userId: String): List<UserStocks> {
+        return userStocksRepository.getStocksByUserId(userId)
+    }
 }

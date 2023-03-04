@@ -1,5 +1,6 @@
 package com.example.hw3.exchange.controller
 
+import com.example.hw3.exchange.model.UserStocks
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -14,4 +15,9 @@ interface UserStocksController {
         @PathVariable companyStocksId: String,
         @RequestParam stocksQuantityDelta: Long,
     )
+
+    @RequestMapping(value = ["/{userId}"], method = [RequestMethod.GET])
+    fun getUserStocks(
+        @PathVariable userId: String,
+    ): List<UserStocks>
 }
