@@ -1,6 +1,7 @@
 package com.example.hw3.profile.integration.impl
 
 import com.example.hw3.exchange.model.CompanyStocks
+import com.example.hw3.exchange.model.CompanyStocksBody
 import com.example.hw3.exchange.model.UserStocks
 import com.example.hw3.profile.integration.ExchangeIntegrator
 import com.fasterxml.jackson.databind.JsonNode
@@ -32,7 +33,7 @@ class ExchangeIntegratorImpl(
                     .build())
     }
 
-    private fun postForData(path: String, data: Any?) {
+    private inline fun <reified R> postForData(path: String, data: Any?): R {
         val url = "$exchangeHost/$path"
 
         val restTemplate = RestTemplate()
@@ -41,10 +42,14 @@ class ExchangeIntegratorImpl(
 
         val json = JSON_MAPPER.writeValueAsString(data)
         val httpEntity = HttpEntity(json, headers)
-        restTemplate.postForEntity<Unit>(url, httpEntity)
+        val responseJson = restTemplate.postForEntity<JsonNode>(url, httpEntity)
+            .body
+            ?: JSON_MAPPER.readTree("{}")
+
+        return JSON_MAPPER.treeToValue(responseJson)
     }
 
-    private fun getData(path: String): JsonNode {
+    private inline fun <reified R> getData(path: String): R {
         val url = "$exchangeHost/$path"
 
         val restTemplate = RestTemplate()
@@ -52,22 +57,30 @@ class ExchangeIntegratorImpl(
         headers.contentType = MediaType.APPLICATION_JSON
 
         val httpEntity = HttpEntity<JsonNode>(headers)
-        return restTemplate.getForEntity<JsonNode>(url, httpEntity)
+        val responseJson = restTemplate.getForEntity<JsonNode>(url, httpEntity)
             .body
             ?: JSON_MAPPER.readTree("{}")
+
+        return JSON_MAPPER.treeToValue(responseJson)
+    }
+
+    override fun addCompanyStocks(companyStocksBody: CompanyStocksBody): CompanyStocks {
+        return postForData("/company/stocks/add", companyStocksBody)
+    }
+
+    override fun updateCompanyStocks(companyStocks: CompanyStocks) {
+        postForData<Unit>("/company/stocks/update", companyStocks)
     }
 
     override fun getCompanyStocks(companyStocksId: String): CompanyStocks {
-        val json = getData("/company/stocks/$companyStocksId")
-        return JSON_MAPPER.treeToValue(json)
+        return getData("/company/stocks/$companyStocksId")
     }
 
     override fun updateUserStocks(userId: String, companyStocksId: String, stocksQuantityDelta: Long) {
-        postForData("/user/stocks/$userId/$companyStocksId?stocksQuantityDelta=$stocksQuantityDelta", null)
+        postForData<Unit>("/user/stocks/$userId/$companyStocksId?stocksQuantityDelta=$stocksQuantityDelta", null)
     }
 
     override fun getUserStocks(userId: String): List<UserStocks> {
-        val json = getData("/user/stocks/$userId")
-        return JSON_MAPPER.treeToValue(json)
+        return getData("/user/stocks/$userId")
     }
 }

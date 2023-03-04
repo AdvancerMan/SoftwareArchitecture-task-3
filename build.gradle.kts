@@ -28,8 +28,13 @@ dependencies {
     testImplementation("junit:junit:4.13.1")
     testImplementation("org.mockito:mockito-core:4.8.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("org.testcontainers:testcontainers:1.17.6")
 }
 
 kotlin {
     jvmToolchain(8)
+}
+
+application {
+    mainClass.set("com.example.hw3.exchange.ExchangeApplicationKt")
 }
